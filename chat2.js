@@ -13,20 +13,17 @@ const {
   OPENAI_API_URL,
   OPENAI_API_KEY,
   PROXY_API_KEY,
-  MODERATION_API_KEY,
-  MODERATION_URL,
 } = process.env;
 
 const chatLimiter = rateLimit({
-  windowMs: 60 * 1000, 
-  max: 2, 
-  total: 50, 
+  windowMs: 60 * 1000,
+  max: 2,
+  total: 50,
   handler: function (req, res, next) {
-
     next(new Error('Rate limit exceeded'));
   },
   getKey: function (req) {
-    return ip.address(); 
+    return ip.address();
   },
 });
 
@@ -34,7 +31,7 @@ app.use(helmet());
 app.use(cors());
 app.set('trust proxy', 1);
 app.use(express.json());
-app.use(morgan('combined')); 
+app.use(morgan('combined'));
 app.use(chatLimiter);
 
 app.get('/', (req, res) => {
@@ -76,20 +73,6 @@ app.post('/v1/chat/completions', async (req, res, next) => {
     const userTextInput = userMessages[1].content;
     if (!userTextInput) {
       return next(new Error('User input is required.'));
-    }
-
-    const moderationResponse = await axios.post(`${MODERATION_URL}/moderations`, {
-      input: userTextInput,
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${MODERATION_API_KEY}`
-      }
-    });
-
-    if (moderationResponse.data.results[0].flagged) {
-
-      return next(new Error('Content flagged as inappropriate.'));
     }
 
     const openaiResponse = await axios.post(`${OPENAI_API_URL}/chat/completions`, req.body, {
