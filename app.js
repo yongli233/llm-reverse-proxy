@@ -40,6 +40,16 @@ app.get('/', (req, res) => {
 
 app.get('/v1/models', async (req, res, next) => {
   try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return next(new Error('Unauthorized access.'));
+    }
+
+    const providedApiKey = authHeader.split(' ')[1];
+    if (providedApiKey !== PROXY_API_KEY) {
+      return next(new Error('Invalid API Key.'));
+    }
+
     const response = await axios.get(`${OPENAI_API_URL}/models`, {
       headers: {
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
