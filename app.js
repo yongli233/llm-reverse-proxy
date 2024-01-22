@@ -90,6 +90,7 @@ app.post('/v1/chat/completions', async (req, res, next) => {
     if (!userTextInput) {
       return next(new Error('User input is required.'));
     }
+
   } catch (error) {
     next(error);
   }
