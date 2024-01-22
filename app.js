@@ -47,7 +47,13 @@ app.get('/v1/models', async (req, res, next) => {
       }
     });
 
-    res.json(response.data);
+    const models = response.data;
+    const result = {
+      object: 'list',
+      data: models
+    };
+
+    res.json(result);
   } catch (error) {
     next(error);
   }
