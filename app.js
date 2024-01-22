@@ -8,6 +8,7 @@ const app = express();
 const ip = require('ip');
 const helmet = require('helmet');
 
+
 const {
   PORT = 3000,
   OPENAI_API_URL,
@@ -27,6 +28,8 @@ const chatLimiter = rateLimit({
   },
 });
 
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use(helmet());
 app.use(cors());
 app.set('trust proxy', 1);
@@ -86,15 +89,10 @@ app.post('/v1/chat/completions', async (req, res, next) => {
       return next(new Error('Invalid message format.'));
     }
 
-    const userTextInput = userMessages[userMessages.length - 1].content;
+    const userTextInput = userMessages[1].content;
     if (!userTextInput) {
       return next(new Error('User input is required.'));
     }
-
-  } catch (error) {
-    next(error);
-  }
-});
 
     const openaiResponse = await axios.post(`${OPENAI_API_URL}/chat/completions`, req.body, {
       headers: {
