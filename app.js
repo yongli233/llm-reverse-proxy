@@ -82,14 +82,18 @@ app.post('/v1/chat/completions', async (req, res, next) => {
 
   try {
     const userMessages = req.body.messages;
-    if (!userMessages || userMessages.length < 2) {
+    if (!userMessages) {
       return next(new Error('Invalid message format.'));
     }
 
-    const userTextInput = userMessages[1].content;
+    const userTextInput = userMessages[userMessages.length - 1].content;
     if (!userTextInput) {
       return next(new Error('User input is required.'));
     }
+  } catch (error) {
+    next(error);
+  }
+});
 
     const openaiResponse = await axios.post(`${OPENAI_API_URL}/chat/completions`, req.body, {
       headers: {
