@@ -121,17 +121,6 @@ app.post('/v1/complete', async (req, res, next) => {
     return next(new Error('Unauthorized access.'));
   }
 
-  try {
-    const userMessages = req.body.messages;
-    if (!userMessages) {
-      return next(new Error('Invalid message format.'));
-    }
-
-    const userTextInput = userMessages[1].content;
-    if (!userTextInput) {
-      return next(new Error('User input is required.'));
-    }
-
     const openaiResponse = await axios.post(`${CLAUDE_API_URL}/complete`, req.body, {
       headers: {
         'Content-Type': 'application/json',
