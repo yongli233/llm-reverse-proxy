@@ -16,6 +16,7 @@ const {
   PROXY_API_KEY,
   CLAUDE_API_KEY,
   CLAUDE_API_URL,
+  ANTHROPIC_API_KEY,
   
 } = process.env;
 
