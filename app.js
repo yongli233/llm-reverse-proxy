@@ -139,7 +139,7 @@ app.post('/v1/complete', async (req, res, next) => {
     const openaiResponse = await axios.post(`${CLAUDE_API_URL}/complete`, req.body, {
       headers: {
         'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
+        'anthropic-version': '2023-06-01',
         'x-api-key': `${CLAUDE_API_KEY}`
       },
       responseType: 'stream'
