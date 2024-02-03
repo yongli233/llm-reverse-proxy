@@ -115,14 +115,9 @@ app.post('/v1/chat/completions', async (req, res, next) => {
 });
 
 app.post('/v1/complete', async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  const apiKeyHeader = req.headers['x-api-key'];
+  if (!apiKeyHeader || apiKeyHeader !== ANTHROPIC_API_KEY) {
     return next(new Error('Unauthorized access.'));
-  }
-
-  const providedApiKey = authHeader.split(' ')[1];
-  if (providedApiKey !== PROXY_API_KEY) {
-    return next(new Error('Invalid API Key.'));
   }
 
   try {
