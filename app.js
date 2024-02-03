@@ -14,6 +14,9 @@ const {
   OPENAI_API_URL,
   OPENAI_API_KEY,
   PROXY_API_KEY,
+  CLAUDE_API_KEY,
+  CLAUDE_API_URL,
+  
 } = process.env;
 
 const chatLimiter = rateLimit({
@@ -111,7 +114,7 @@ app.post('/v1/chat/completions', async (req, res, next) => {
   }
 });
 
-app.post('/chat/completions', async (req, res, next) => {
+app.post('/v1/complete', async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return next(new Error('Unauthorized access.'));
@@ -133,10 +136,11 @@ app.post('/chat/completions', async (req, res, next) => {
       return next(new Error('User input is required.'));
     }
 
-    const openaiResponse = await axios.post(`${OPENAI_API_URL}/chat/completions`, req.body, {
+    const openaiResponse = await axios.post(`${CLAUDE_API_URL}/complete`, req.body, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`
+        'anthropic-version': '2023-06-01'
+        'x-api-key': `${CLAUDE_API_KEY}`
       },
       responseType: 'stream'
     });
