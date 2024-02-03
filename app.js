@@ -8,7 +8,6 @@ const app = express();
 const ip = require('ip');
 const helmet = require('helmet');
 
-
 const {
   PORT = 3000,
   OPENAI_API_URL,
@@ -16,8 +15,7 @@ const {
   PROXY_API_KEY,
   CLAUDE_API_KEY,
   CLAUDE_API_URL,
-  ANTHROPIC_API_KEY,
-  
+  ANTHROPIC_API_KEY
 } = process.env;
 
 const chatLimiter = rateLimit({
@@ -29,7 +27,7 @@ const chatLimiter = rateLimit({
   },
   getKey: function (req) {
     return ip.address();
-  },
+  }
 });
 
 app.use(express.json({ limit: '50mb' }));
@@ -121,6 +119,7 @@ app.post('/v1/complete', async (req, res, next) => {
     return next(new Error('Unauthorized access.'));
   }
 
+  try {
     const openaiResponse = await axios.post(`${CLAUDE_API_URL}/complete`, req.body, {
       headers: {
         'Content-Type': 'application/json',
