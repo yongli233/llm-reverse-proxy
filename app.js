@@ -4,9 +4,8 @@ const axios = require('axios');
 const rateLimit = require('express-rate-limit');
 const morgan = require('morgan');
 const cors = require('cors');
-const app = express();
-const ip = require('ip');
 const helmet = require('helmet');
+const startTime = Date.now();
 
 const {
   PORT = 3000,
@@ -19,29 +18,47 @@ const {
 } = process.env;
 
 const chatLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 2,
-  total: 50,
-  handler: function (req, res, next) {
-    next(new Error('Rate limit exceeded'));
+  windowMs: 60 * 1000, // 1 minute
+  max: 2, // 2 requests/min (window)
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: function (req, res /*, next */) {
+    // Basic ratelimit rough estimate ratelimit time
+    const resetTimeInSeconds = Math.ceil(this.windowMs / 1000);
+    res.status(429).json({
+      error: {
+        type: "get_ratelimited",
+        message: `The proxy is ratelimited to ${this.max} prompts per minute. Please try again in about ${resetTimeInSeconds} seconds.`,
+      },
+    });
   },
-  getKey: function (req) {
-    return ip.address();
-  }
 });
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
+const app = express();
+
 app.use(helmet());
 app.use(cors());
 app.set('trust proxy', 1);
-app.use(express.json());
-app.use(morgan('combined'));
-app.use(chatLimiter);
+// Allow big requests to be handled 
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'tiny' : 'combined'));
+
 
 app.get('/', (req, res) => {
-  res.json({ message: 'OpenCLM API is up and running!' });
+  const uptime = Date.now() - startTime;
+  const uptimeInSeconds = Math.floor(uptime / 1000);
+  const uptimeInMinutes = Math.floor(uptimeInSeconds / 60);
+  const uptimeInHours = Math.floor(uptimeInMinutes / 60);
+  const uptimeInDays = Math.floor(uptimeInHours / 24);
+  const readableUptime = `${uptimeInDays}d ${uptimeInHours % 24}h ${uptimeInMinutes % 60}m ${uptimeInSeconds % 60}s`;
+
+  res.json({
+    message: 'OpenCLM API is up and running!',
+    uptime: readableUptime,
+  });
 });
+
 
 app.get('/v1/models', async (req, res, next) => {
   try {
@@ -74,7 +91,7 @@ app.get('/v1/models', async (req, res, next) => {
   }
 });
 
-app.post('/v1/chat/completions', async (req, res, next) => {
+app.post('/v1/chat/completions', chatLimiter, async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return next(new Error('Unauthorized access.'));
@@ -113,7 +130,7 @@ app.post('/v1/chat/completions', async (req, res, next) => {
   }
 });
 
-app.post('/v1/complete', async (req, res, next) => {
+app.post('/v1/complete', chatLimiter, async (req, res, next) => {
   const apiKeyHeader = req.headers['x-api-key'];
   if (!apiKeyHeader || apiKeyHeader !== ANTHROPIC_API_KEY) {
     return next(new Error('Unauthorized access.'));
@@ -137,6 +154,8 @@ app.post('/v1/complete', async (req, res, next) => {
     next(error);
   }
 });
+
+
 
 app.use((err, req, res, next) => {
   console.error(`Error: ${err.message}`);
