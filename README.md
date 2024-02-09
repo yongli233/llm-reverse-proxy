@@ -16,7 +16,7 @@ This repo combined both Openai/Anthropic into one single endpoint.
 
 - #### Installation
 
-- 1. Clone repo
+1. Clone repo
 ```
 git clone https://github.com/yourusername/your-repo-name.git
 ```
