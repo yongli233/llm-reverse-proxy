@@ -1,6 +1,8 @@
 const axios = require('axios');
 const { OPENAI_API_URL, OPENAI_API_KEY, PROXY_API_KEY } = process.env;
 
+let openAIRequestCount = 0;
+
 module.exports = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -30,6 +32,8 @@ module.exports = async (req, res, next) => {
       },
       responseType: 'stream'
     });
+
+    openAIRequestCount++; //counter
 
     res.status(openaiResponse.status);
     res.set(openaiResponse.headers);

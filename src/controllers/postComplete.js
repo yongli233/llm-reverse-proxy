@@ -1,6 +1,8 @@
 const axios = require('axios');
 const { CLAUDE_API_URL, CLAUDE_API_KEY, PROXY_API_KEY } = process.env;
 
+let anthropicRequestCount = 0;
+
 module.exports = async (req, res, next) => {
   const apiKeyHeader = req.headers['x-api-key'];
   if (!apiKeyHeader || apiKeyHeader !== PROXY_API_KEY) {
@@ -15,6 +17,8 @@ module.exports = async (req, res, next) => {
       },
       responseType: 'stream'
     });
+
+    anthropicRequestCount++;
 
     res.status(openaiResponse.status);
     res.set(openaiResponse.headers);
