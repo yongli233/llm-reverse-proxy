@@ -156,7 +156,6 @@ app.post('/v1/complete', chatLimiter, async (req, res, next) => {
 });
 
 
-
 app.use((err, req, res, next) => {
   console.error(`Error: ${err.message}`);
   res.status(500).json({ error: err.message });
