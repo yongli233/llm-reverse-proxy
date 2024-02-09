@@ -18,7 +18,7 @@ This repo combined both Openai/Anthropic into one single endpoint.
 
 1. Clone repo
 ```
-git clone https://github.com/yourusername/your-repo-name.git
+git clone https://github.com/yongli233/reverse-proxy.git
 ```
 2. Install dependencies
 ```
