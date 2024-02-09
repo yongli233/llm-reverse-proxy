@@ -1,0 +1,82 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore logs and generated files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Ignore OS and IDE files
+.DS_Store
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+*.swo
+
+# Ignore build output
+build/
+dist/
+out/
+tmp/
+*.pid
+*.seed
+*.pid.lock
+
+# Ignore dependency lock files
+package-lock.json
+yarn.lock
+
+# Ignore local development files
+/.env
+
+# Ignore testing files
+/coverage
+/.nyc_output
+
+# Ignore production build files
+/public
+
+# Ignore caching directories
+/.pnp/
+.pnp.js
+.pnp.cjs
+
+# Ignore Jest coverage reports
+/coverage
+
+# Ignore Next.js build output
+/.next/
+/out/
+
+# Ignore Nuxt.js build output
+/.nuxt/
+
+# Ignore Storybook build output
+/storybook-static/
+
+# Ignore Cypress videos and screenshots
+/cypress/videos/
+/cypress/screenshots/
+
+# Ignore .eslintcache
+/.eslintcache
+
+# Ignore .node_repl_history
+/.node_repl_history
+
+# Ignore .yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.yarn-integrity
