@@ -27,6 +27,7 @@ module.exports = async (req, res, next) => {
 
     const openaiResponse = await axios.post(`${OPENAI_API_URL}/chat/completions`, req.body, {
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${OPENAI_API_KEY}`
       },

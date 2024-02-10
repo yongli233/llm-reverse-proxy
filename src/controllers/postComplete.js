@@ -11,11 +11,13 @@ module.exports = async (req, res, next) => {
   try {
     const openaiResponse = await axios.post(`${CLAUDE_API_URL}/complete`, req.body, {
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'anthropic-version': '2023-06-01',
         'x-api-key': `${CLAUDE_API_KEY}`
       },
-      responseType: 'stream'
+      responseType: 'stream',
+      timeout: 1 * 60 * 1000
     });
 
     anthropicRequestCount++;
