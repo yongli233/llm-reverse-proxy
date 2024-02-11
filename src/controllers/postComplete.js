@@ -1,5 +1,7 @@
 const axios = require('axios');
-const { CLAUDE_API_URL, CLAUDE_API_KEY, PROXY_API_KEY } = process.env;
+const { CLAUDE_API_KEY, PROXY_API_KEY } = process.env;
+
+let CLAUDE_API_URL = process.env.CLAUDE_API_URL || 'https://api.anthropic.com/v1';
 
 let anthropicRequestCount = 0;
 

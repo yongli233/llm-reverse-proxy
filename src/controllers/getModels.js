@@ -1,5 +1,7 @@
 const axios = require('axios');
-const { OPENAI_API_URL, OPENAI_API_KEY, PROXY_API_KEY } = process.env;
+const { OPENAI_API_KEY, PROXY_API_KEY } = process.env;
+
+let OPENAI_API_URL = process.env.OPENAI_API_URL || 'https://api.openai.com/v1';
 
 module.exports = async (req, res, next) => {
   try {
